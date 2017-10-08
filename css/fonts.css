@@ -1,0 +1,19 @@
+@font-face {
+    font-family: 'SFUIDisplayRegular';
+    src: url('../fonts/SFUIDisplayRegular.eot');
+    src: url('../fonts/SFUIDisplayRegular.eot') format('embedded-opentype'),
+    url('../fonts/SFUIDisplayRegular.woff2') format('woff2'),
+    url('../fonts/SFUIDisplayRegular.woff') format('woff'),
+    url('../fonts/SFUIDisplayRegular.ttf') format('truetype'),
+    url('../fonts/SFUIDisplayRegular.svg#SFUIDisplayRegular') format('svg');
+}
+
+@font-face {
+    font-family: 'SFUITextRegular';
+    src: url('../fonts/SFUITextRegular.eot');
+    src: url('../fonts/SFUITextRegular.eot') format('embedded-opentype'),
+    url('../fonts/SFUITextRegular.woff2') format('woff2'),
+    url('../fonts/SFUITextRegular.woff') format('woff'),
+    url('../fonts/SFUITextRegular.ttf') format('truetype'),
+    url('../fonts/SFUITextRegular.svg#SFUITextRegular') format('svg');
+}
