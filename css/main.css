@@ -10,6 +10,7 @@ a {
 }
 
 .top-menu {
+    position: relative;
 	height: 50px;
 	width: 100%;
 	background-color: #fff;
@@ -62,6 +63,36 @@ a {
     width: 4px;
 }
 
+.modal-panel-left{
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 200px;
+    height: 100%;
+    background-color: #fff;
+    z-index: 1;
+    padding: 65px 0px;
+}
+
+.modal-panel-left-elem{
+    width: calc(100% - 40px);
+    height: 15px;
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.divq{
+    display: none;
+    margin-left: 200px;
+    margin-bottom: 50px;
+    width: calc(100% - 250px);
+    height: calc(100% - 150px);
+    text-align: center;
+    padding: 25px;
+    overflow: auto;
+}
+
 .modal-panel-bottom{
     position: fixed;
     bottom: -150px;
@@ -89,7 +120,7 @@ a {
 
 .modal-panel-bottom-header{
     padding: 15px 25px;
-    width: 100%;
+    width: calc(100% - 50px);
     height: 20px;
     font-size: 18px;
     background-color: #fafafa;
@@ -152,7 +183,7 @@ a {
      /* Выполнен: color: #1db9dc; */
      /* Выполняется: color: #ccbe14; */
      /* Ожидается задание: color: #cc14b5; */
-     margin: 2px 40px 2px 0px;
+     margin: 2px 0px;
      font-size: 14px;
      float: right;
  }
@@ -250,6 +281,48 @@ a {
 .hvr-sweep-to-bottom:hover:before, .hvr-sweep-to-bottom:focus:before, .hvr-sweep-to-bottom:active:before {
   -webkit-transform: scaleY(1);
   transform: scaleY(1);
+}
+
+/* Sweep To Left */
+.hvr-sweep-to-left {
+    display: inline-block;
+    vertical-align: middle;
+    -webkit-transform: perspective(1px) translateZ(0);
+    transform: perspective(1px) translateZ(0);
+    box-shadow: 0 0 1px transparent;
+    position: relative;
+    -webkit-transition-property: color;
+    transition-property: color;
+    -webkit-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+}
+.hvr-sweep-to-left:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #f5f5f5;
+    -webkit-transform: scaleX(0);
+    transform: scaleX(0);
+    -webkit-transform-origin: 100% 50%;
+    transform-origin: 100% 50%;
+    -webkit-transition-property: transform;
+    transition-property: transform;
+    -webkit-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    -webkit-transition-timing-function: ease-out;
+    transition-timing-function: ease-out;
+}
+.hvr-sweep-to-left:hover, .hvr-sweep-to-left:focus, .hvr-sweep-to-left:active {
+    color: #9b9b9b;
+}
+
+.hvr-sweep-to-left:hover:before, .hvr-sweep-to-left:focus:before, .hvr-sweep-to-left:active:before {
+    -webkit-transform: scaleX(1);
+    transform: scaleX(1);
 }
 
 @keyframes pulse{

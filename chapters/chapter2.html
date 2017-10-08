@@ -11,20 +11,69 @@
     <div class="top-menu-name">
         <a href="../index.html">Компьютерная геометрия и графика</a>
     </div>
-    <div id="top-1" class="top-menu-element hvr-sweep-to-bottom "><a href="chapter1.html">Глава 1</a></div>
+    <a href="chapter1.html"><div id="top-1" class="top-menu-element hvr-sweep-to-bottom ">Глава 1</div></a>
     <div id="top-2" class="top-menu-element hvr-sweep-to-bottom ">Глава 2</div>
-    <div id="top-3" class="top-menu-element hvr-sweep-to-bottom "><a href="chapter3.html">Глава 3</a></div>
-    <div id="top-4" class="top-menu-element hvr-sweep-to-bottom "><a href="chapter4.html">Глава 4</a></div>
-    <div id="top-5" class="top-menu-element hvr-sweep-to-bottom "><a href="chapter5.html">Глава 5</a></div>
-    <div id="top-6" class="top-menu-element hvr-sweep-to-bottom "><a href="chapter6.html">Глава 6</a></div>
-    <div id="top-7" class="top-menu-element hvr-sweep-to-bottom "><a href="chapter7.html">Глава 7</a></div>
-    <div id="top-8" class="top-menu-element hvr-sweep-to-bottom "><a href="chapter8.html">Глава 8</a></div>
+    <a href="chapter3.html"><div id="top-3" class="top-menu-element hvr-sweep-to-bottom ">Глава 3</div></a>
+    <a href="chapter4.html"><div id="top-4" class="top-menu-element hvr-sweep-to-bottom ">Глава 4</div></a>
+    <a href="chapter5.html"><div id="top-5" class="top-menu-element hvr-sweep-to-bottom ">Глава 5</div></a>
+    <a href="chapter6.html"><div id="top-6" class="top-menu-element hvr-sweep-to-bottom ">Глава 6</div></a>
+    <a href="chapter7.html"><div id="top-7" class="top-menu-element hvr-sweep-to-bottom ">Глава 7</div></a>
+    <a href="chapter8.html"><div id="top-8" class="top-menu-element hvr-sweep-to-bottom ">Глава 8</div></a>
     <div class="easter" onclick="easter()"></div>
+</div>
+<div class="modal-panel-left">
+    <div class="modal-panel-left-elem hvr-sweep-to-left" id="q-1" onclick="questChoose(this)">Пример 1</div>
+    <div class="modal-panel-left-elem hvr-sweep-to-left" id="q-2" onclick="questChoose(this)">Пример 2</div>
+    <div class="modal-panel-left-elem hvr-sweep-to-left" id="q-3" onclick="questChoose(this)">Пример 3</div>
+    <div class="modal-panel-left-elem hvr-sweep-to-left" id="q-4" onclick="questChoose(this)">Пример 4</div>
+    <div class="modal-panel-left-elem hvr-sweep-to-left" id="q-5" onclick="questChoose(this)">Пример 5</div>
+    <div class="modal-panel-left-elem hvr-sweep-to-left" id="q-6" onclick="questChoose(this)">Пример 6</div>
 </div>
 <div>
     <!---------------------------------------------------------------------------------------->
 
-    <div class="nothing-to-show">ЗАДАНИЕ ЕЩЕ НЕ ВЫПОЛНЕНО =(</div>
+    <div id="divq-1" class="divq">
+        <p>Треугольник на ярко красном фоне</p>
+        <canvas id="canvas3D-1" width="400" height="300">Ваш браузер не поддерживает элемент canvas</canvas>
+        <!-- фрагментный шейдер -->
+        <script id="shader-fs" type="x-shader/x-fragment">
+          void main(void) {
+            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+          }
+        </script>
+        <!-- вершинный шейдер -->
+        <script id="shader-vs" type="x-shader/x-vertex">
+          attribute vec3 aVertexPosition;
+          void main(void) {
+            gl_Position = vec4(aVertexPosition, 1.0);
+          }
+        </script>
+    </div>
+
+    <div id="divq-2" class="divq">
+        <p>Квадрат из двух треугольников</p>
+        <canvas id="canvas3D-2" width="400" height="300">Ваш браузер не поддерживает элемент canvas</canvas>
+    </div>
+
+    <div id="divq-3" class="divq">
+        <p>Два треугольника (5 вершин)</p>
+        <canvas id="canvas3D-3" width="400" height="300">Ваш браузер не поддерживает элемент canvas</canvas>
+    </div>
+
+    <div id="divq-4" class="divq">
+        <p>Три треугольника (5 вершин)</p>
+        <canvas id="canvas3D-4" width="400" height="300">Ваш браузер не поддерживает элемент canvas</canvas>
+    </div>
+
+    <div id="divq-5" class="divq">
+        <p>Три последовательно соединенных треугольника (5 вершин)</p>
+        <canvas id="canvas3D-5" width="400" height="300">Ваш браузер не поддерживает элемент canvas</canvas>
+    </div>
+
+    <div id="divq-6" class="divq">
+        <p>Набор линий (5 вершин)</p>
+        <canvas id="canvas3D-6" width="400" height="300">Ваш браузер не поддерживает элемент canvas</canvas>
+    </div>
 
     <!---------------------------------------------------------------------------------------->
 </div>
@@ -42,5 +91,14 @@
 </div>
 <script src="../js/jquery-3.2.1.min.js"></script>
 <script src="../js/main.js"></script>
+
+<!-- Chapter 2 script -->
+<script src="../js/chapter2-1.js"></script>
+<script src="../js/chapter2-2.js"></script>
+<script src="../js/chapter2-3.js"></script>
+<script src="../js/chapter2-4.js"></script>
+<script src="../js/chapter2-5.js"></script>
+<script src="../js/chapter2-6.js"></script>
+
 </body>
 </html>

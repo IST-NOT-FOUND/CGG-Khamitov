@@ -1,16 +1,20 @@
-var isPlaying = false;
-var eas = $(document).find('.easter');
-var b = $(document).find('body');
-var au = new Audio('./css/etc.css');
+var isPlaying = false,
+    eas = $(document).find('.easter'),
+    b = $(document).find('body'),
+    au, tempElemId = "q-1";
 
 $( document ).ready(function() {
     var path = location.pathname;
     var pathToJSON;
     if (path.substr(path.lastIndexOf("/")+1) == 'index.html'){
         pathToJSON = 'projectConfig.json';
-    } else pathToJSON = '../projectConfig.json';
+        au = new Audio('css/etc.css')
+    } else {
+        pathToJSON = '../projectConfig.json';
+        au = new Audio('../css/etc.css')
+    }
 
-    $.getJSON(pathToJSON, function(data) {
+    $.getJSON(pathToJSON, function( data ) {
         for(var i=0;i<data.length;i++){
             var elem = document.querySelector("#top-" + data[i].chapter);
             if (data[i].status == "0"){
@@ -57,6 +61,9 @@ $( document ).ready(function() {
             }
         }
     });
+
+    $(document).find("#divq-1").css("display", "block");
+    $(document).find("#q-1").css("backgroundColor", "#1db9dc");
 });
 
 function easter() {
@@ -76,4 +83,17 @@ function easter() {
         b.css("animationName", "none");
         b.css("backgroundColor", "#eee");
     }
+}
+
+function questChoose(elem){
+    var curElemId = elem.id;
+
+    if (tempElemId != "") {
+        $(document).find("#" + tempElemId).css("backgroundColor", "#fff");
+        $(document).find("#div" + tempElemId).css("display", "none");
+    }
+    $(document).find("#" + curElemId).css("backgroundColor", "#1db9dc");
+    $(document).find("#div" + curElemId).css("display", "block");
+
+    tempElemId = curElemId;
 }
