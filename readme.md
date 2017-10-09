@@ -1,10 +1,11 @@
 Репозиторий лабораторных работ по "Компьютерной геометрии и графике"
 -
 **Разработчик проекта:** студент кафедры ГИС УГАТУ ***Хамитов М. А.***
-###[`ВКонтакте`](http://vk.com/nefritor) [`Facebook`](http://facebook.com/nefritor) [`Instagram`](http://instagram.com/nefritor) 
+
+[`ВКонтакте`](http://vk.com/nefritor) [`Facebook`](http://facebook.com/nefritor) [`Instagram`](http://instagram.com/nefritor) 
 >#### Данный проект содержит файлы, созданные в процессе обучения владения библиотекой WebGL
 >
->####[`Ссылка на страницу с уроками WebGL`](https://metanit.com/web/webgl/1.1.php)
+>[`Ссылка на страницу с уроками WebGL`](https://metanit.com/web/webgl/1.1.php)
 
     Клонирование репозитория: 
     HTTPS: https://github.com/IST-NOT-FOUND/CGG-Khamitov.git
