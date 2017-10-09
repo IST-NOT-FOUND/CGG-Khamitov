@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Репозиторий лабораторных работ</title>
-    <!--<link href="css/bootstrap.min.css" rel="stylesheet"/>-->
+
     <link href="../css/main.css" rel="stylesheet"/>
     <link href="../css/fonts.css" rel="stylesheet"/>
 </head>
@@ -21,10 +21,50 @@
     <a href="chapter8.html"><div id="top-8" class="top-menu-element hvr-sweep-to-bottom ">Глава 8</div></a>
     <div class="easter" onclick="easter()"></div>
 </div>
+<div class="modal-panel-left">
+    <div class="modal-panel-left-elem hvr-sweep-to-left" id="q-1" onclick="questChoose(this)">Пример 1</div>
+    <div class="modal-panel-left-elem hvr-sweep-to-left" id="q-2" onclick="questChoose(this)">Пример 2</div>
+</div>
 <div>
     <!---------------------------------------------------------------------------------------->
 
-    <div class="nothing-to-show">ЗАДАНИЕ ЕЩЕ НЕ ВЫПОЛНЕНО =(</div>
+    <div id="divq-1" class="divq">
+        <p>Набор линий (при помощи шейдеров)</p>
+        <canvas id="canvas3D-1" width="400" height="300">Ваш браузер не поддерживает элемент canvas</canvas>
+        <!-- фрагментный шейдер -->
+        <script id="shader-fs-1" type="x-shader/x-fragment">
+          void main(void) {
+            gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+          }
+        </script>
+        <!-- вершинный шейдер -->
+        <script id="shader-vs-1" type="x-shader/x-vertex">
+          attribute vec3 aVertexPosition;
+          void main(void) {
+            gl_Position = vec4(aVertexPosition, 1.0);
+          }
+        </script>
+    </div>
+
+    <div id="divq-2" class="divq">
+        <p>Набор линий сжатый в два раза (при помощи шейдеров)</p>
+        <canvas id="canvas3D-2" width="400" height="300">Ваш браузер не поддерживает элемент canvas</canvas>
+        <!-- фрагментный шейдер -->
+        <script id="shader-fs-2" type="x-shader/x-fragment">
+          void main(void) {
+            gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+          }
+        </script>
+        <!-- вершинный шейдер -->
+        <script id="shader-vs-2" type="x-shader/x-vertex">
+            attribute vec3 aVertexPosition;
+            const float k=2.0;
+             void main(void) {
+                float x = aVertexPosition.x / k;
+                gl_Position = vec4(x, aVertexPosition.y, aVertexPosition.z, 1.0);
+            }
+        </script>
+    </div>
 
     <!---------------------------------------------------------------------------------------->
 </div>
@@ -42,5 +82,10 @@
 </div>
 <script src="../js/jquery-3.2.1.min.js"></script>
 <script src="../js/main.js"></script>
+
+<!-- Chapter 3 script -->
+<script src="../js/chapter3-1.js"></script>
+<script src="../js/chapter3-2.js"></script>
+
 </body>
 </html>
