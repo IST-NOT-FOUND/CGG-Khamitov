@@ -76,7 +76,7 @@ a {
 
 .modal-panel-left-elem{
     width: calc(100% - 40px);
-    height: 15px;
+    min-height: 15px;
     padding: 10px 20px;
     font-size: 14px;
     cursor: pointer;
@@ -132,6 +132,7 @@ a {
 
 .comment-img{
     background-color: #eee;
+    background-size: contain;
     margin: 10px;
     height: 30px;
     width: 30px;
@@ -144,6 +145,7 @@ a {
     padding: 7px 0px;
     font-size: 14px;
     float: left;
+    font-weight: bold;
 }
 
 .comment-text{
@@ -346,3 +348,8 @@ a {
     75%{color: #ac20d8;}
     88%{color: #d82084;}
     100%{color: #d82020;}}
+
+@keyframes activePanelHint {
+    0%{bottom: -150px;}
+    50%{bottom: -100px;}
+    100%{bottom: -150px;}}

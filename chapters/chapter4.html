@@ -21,10 +21,39 @@
     <a href="chapter8.html"><div id="top-8" class="top-menu-element hvr-sweep-to-bottom ">Глава 8</div></a>
     <div class="easter" onclick="easter()"></div>
 </div>
+    <div class="modal-panel-left">
+        <div class="modal-panel-left-elem hvr-sweep-to-left" id="q-1" onclick="questChoose(this)">Пример 1</div>
+        <div class="modal-panel-left-elem hvr-sweep-to-left" id="q-2" onclick="questChoose(this)">Индивидуальное задание</div>
+    </div>
 <div>
     <!---------------------------------------------------------------------------------------->
 
-    <div class="nothing-to-show">ЗАДАНИЕ ЕЩЕ НЕ ВЫПОЛНЕНО =(</div>
+    <div id="divq-1" class="divq">
+        <p>Цветной треугольник</p>
+        <canvas id="canvas3D-1" width="400" height="300">Ваш браузер не поддерживает элемент canvas</canvas>
+        <script id="shader-fs" type="x-shader/x-fragment">
+            varying highp vec4 vColor;
+            void main(void) {
+            gl_FragColor = vColor;
+            }
+        </script>
+        <script id="shader-vs" type="x-shader/x-vertex">
+            attribute vec3 aVertexPosition;
+            attribute vec3 aVertexColor;
+            varying highp vec4 vColor;
+            void main(void) {
+                gl_Position = vec4(aVertexPosition, 1.0);
+                vColor = vec4(aVertexColor, 1.0);
+            }
+        </script>
+    </div>
+
+    <div id="divq-2" class="divq">
+
+        <p>Изменение фигуры, цвета фигуры и цвета заднего фона</p>
+        <canvas id="canvas3D-2" width="400" height="300">Ваш браузер не поддерживает элемент canvas</canvas>
+
+    </div>
 
     <!---------------------------------------------------------------------------------------->
 </div>
@@ -42,5 +71,10 @@
 </div>
 <script src="../js/jquery-3.2.1.min.js"></script>
 <script src="../js/main.js"></script>
+
+<!-- Chapter 4 script -->
+<script src="../js/chapter4-1.js"></script>
+<script src="../js/chapter4-2.js"></script>
+
 </body>
 </html>
