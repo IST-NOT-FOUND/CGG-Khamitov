@@ -19,7 +19,7 @@ $( document ).ready(function() {
     }
 
     //Запрос данных файла конфигурации проекта
-    $.getJSON(pathToJSON, function( data ) {
+    $.getJSON(pathToJSON, function( data, status ) {
         for(var i=0;i<data.length;i++){
             var elem = document.querySelector("#top-" + data[i].chapter);
 
@@ -99,7 +99,10 @@ $( document ).ready(function() {
                 }
             }
         }
+    }).fail(function () {
+        alert("Данная страница не обработала файл конфигурации projectConfig.json!\nРекомендуется запустить проект на веб-сервере, для использования полного функционала (так, как оно задумано)");
     });
+
     //Отображаем первый пример при загрузке страницы
     $(document).find("#divq-1").css("display", "block");
     $(document).find("#q-1").css("backgroundColor", "#1db9dc");
