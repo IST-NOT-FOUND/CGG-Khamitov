@@ -4,8 +4,8 @@ var vertexBuffer;
 // установка шейдеров
 function initShaders() {
     // получаем шейдеры
-    var fragmentShader = getShader(gl.FRAGMENT_SHADER, 'shader-fs');
-    var vertexShader = getShader(gl.VERTEX_SHADER, 'shader-vs');
+    var fragmentShader = getShader(gl.FRAGMENT_SHADER, 'shader-fs-1');
+    var vertexShader = getShader(gl.VERTEX_SHADER, 'shader-vs-1');
     //создаем объект программы шейдеров
     shaderProgram = gl.createProgram();
     // прикрепляем к ней шейдеры
@@ -99,4 +99,5 @@ window.onload=function(){
         draw();
     }
     load2();
+    load3();
 };
