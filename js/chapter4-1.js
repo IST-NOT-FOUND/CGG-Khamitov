@@ -105,5 +105,6 @@ window.onload=function(){
 
         draw();
 
+        load2();
     }
 };
