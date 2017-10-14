@@ -103,5 +103,6 @@ window.onload=function(){
         load4();
         load5();
         load6();
+        load7();
     }
 };
