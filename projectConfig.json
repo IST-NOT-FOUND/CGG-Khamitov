@@ -1,10 +1,10 @@
 [
   {
     "chapter" : 1,
-    "status" : 1,
-    "comment_name" : "",
-    "comment_img" : 0,
-    "comment_text" : ""
+    "status" : 3,
+    "comment_name" : "ROAGIS",
+    "comment_img" : 1,
+    "comment_text" : "1) Сделать квадрат вместо треугольника;/2) Изменить цвета (фон и треугольник)."
   },
   {
     "chapter" : 2,
@@ -22,10 +22,10 @@
   },
   {
     "chapter" : 4,
-    "status" : 3,
-    "comment_name" : "ROAGIS",
-    "comment_img" : 1,
-    "comment_text" : "1) Сделать квадрат вместо треугольника;/2) Изменить цвета (фон и треугольник)."
+    "status" : 1,
+    "comment_name" : "",
+    "comment_img" : 0,
+    "comment_text" : ""
   },
   {
     "chapter" : 5,

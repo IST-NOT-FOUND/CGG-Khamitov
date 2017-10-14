@@ -4,9 +4,9 @@ var shaderProgram;
 var vertexBuffer; // буфер вершин
 var colorBuffer; //буфер цветов
 // установка шейдеров
-function initShaders() {
-    var fragmentShader = getShader(gl.FRAGMENT_SHADER, 'shader-fs');
-    var vertexShader = getShader(gl.VERTEX_SHADER, 'shader-vs');
+function initShaders1() {
+    var fragmentShader = getShader(gl.FRAGMENT_SHADER, 'shader-fs-2');
+    var vertexShader = getShader(gl.VERTEX_SHADER, 'shader-vs-2');
 
     shaderProgram = gl.createProgram();
 
@@ -44,32 +44,38 @@ function getShader(type,id) {
     return shader;
 }
 // установка буферов вершин и индексов
-function initBuffers() {
+function initBuffers1() {
 
     var vertices = [
-        0.0,  0.5,  0.0,
+        -0.5,  0.5,  0.0,
+        0.5, 0.5,  0.0,
+        0.5, -0.5,  0.0,
+        0.5, -0.5,  0.0,
         -0.5, -0.5,  0.0,
-        0.5, -0.5,  0.0
+        -0.5,  0.5,  0.0
     ];
     // установка буфера вершин
     vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
     vertexBuffer.itemSize = 3;
-    vertexBuffer.numberOfItems = 3;
+    vertexBuffer.numberOfItems = 6;
     var сolors = [
-        1.0, 0.0, 0.0,
-        0.0, 0.0, 1.0,
-        0.0, 1.0, 0.0
+        0.11, 0.73, 0.86,
+        0.11, 0.73, 0.86,
+        0.11, 0.73, 0.86,
+        0.11, 0.73, 0.86,
+        0.11, 0.73, 0.86,
+        0.11, 0.73, 0.86
     ];
     colorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(сolors), gl.STATIC_DRAW);
 }
 // отрисовка
-function draw() {
+function draw1() {
 
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clearColor(0.92, 0.18, 0.48, 1.0);
     gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
@@ -84,9 +90,9 @@ function draw() {
     gl.drawArrays(gl.TRIANGLES, 0, vertexBuffer.numberOfItems);
 }
 
-window.onload=function(){
+function load3(){
 
-    var canvas = document.getElementById("canvas3D-1");
+    var canvas = document.getElementById("canvas3D-2");
     try {
         gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
     }
@@ -99,11 +105,10 @@ window.onload=function(){
         gl.viewportWidth = canvas.width;
         gl.viewportHeight = canvas.height;
 
-        initShaders();
+        initShaders1();
 
-        initBuffers();
+        initBuffers1();
 
-        draw();
-
+        draw1();
     }
 };
