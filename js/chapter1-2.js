@@ -7,7 +7,7 @@ function load2(){
     // инициализация начальных значений
     function init() {
         // создаем камеру - перспективная проекция
-        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
+        camera = new THREE.PerspectiveCamera(75, 400 / 300, 1, 1000);
         // установка z-координаты камеры
         camera.position.z = 600;
         // настройка сцены
@@ -23,7 +23,7 @@ function load2(){
         // создаем объект для рендеринга сцены
         renderer = new THREE.WebGLRenderer();
         // установка размеров
-        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setSize(400, 300);
         // встраиваем в DOM-структуру страницы
         document.getElementById("divq-2").appendChild(renderer.domElement);
     }
