@@ -1,10 +1,12 @@
-
 var gl;
 var shaderProgram;
 var vertexBuffer; // буфер вершин
-var colorBuffer; //буфер цветов
+var indexBuffer; //буфер индексов
+
+var mvMatrix = mat4.create();
+var pMatrix = mat4.create();
 // установка шейдеров
-function initShaders() {
+function initShaders1() {
     var fragmentShader = getShader(gl.FRAGMENT_SHADER, 'shader-fs');
     var vertexShader = getShader(gl.VERTEX_SHADER, 'shader-vs');
 
@@ -23,17 +25,21 @@ function initShaders() {
 
     shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
     gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
-    shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "aVertexColor");
-    gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
+    // создания переменных uniform для передачи матриц в шейдер
+    shaderProgram.MVMatrix = gl.getUniformLocation(shaderProgram, "uMVMatrix");
+    shaderProgram.ProjMatrix = gl.getUniformLocation(shaderProgram, "uPMatrix");
+}
+
+function setMatrixUniforms(){
+    gl.uniformMatrix4fv(shaderProgram.ProjMatrix,false, pMatrix);
+    gl.uniformMatrix4fv(shaderProgram.MVMatrix, false, mvMatrix);
 }
 // Функция создания шейдера
 function getShader(type,id) {
+
     var source = document.getElementById(id).innerHTML;
-
     var shader = gl.createShader(type);
-
     gl.shaderSource(shader, source);
-
     gl.compileShader(shader);
 
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
@@ -44,44 +50,54 @@ function getShader(type,id) {
     return shader;
 }
 // установка буферов вершин и индексов
-function initBuffers() {
+function initBuffers1() {
 
-    var vertices = [
-        0.0,  0.5,  0.0,
-        -0.5, -0.5,  0.0,
-        0.5, -0.5,  0.0
-    ];
+    var vertices =[
+        // лицевая часть
+        -0.5, -0.5, 0.5,
+        -0.5, 0.5, 0.5,
+        0.5, 0.5, 0.5,
+        0.5, -0.5, 0.5,
+        // задняя часть
+        -0.5, -0.5, -0.5,
+        -0.5, 0.5, -0.5,
+        0.5, 0.5, -0.5,
+        0.5, -0.5, -0.5];
+
+    var indices = [0, 1, 1, 2, 2, 3, 3, 0, 0, 4, 4, 5, 5, 6, 6,7, 7,4, 1, 5, 2, 6, 3, 7];
+
     // установка буфера вершин
     vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
     vertexBuffer.itemSize = 3;
-    vertexBuffer.numberOfItems = 3;
-    var сolors = [
-        1.0, 0.0, 0.0,
-        0.0, 0.0, 1.0,
-        0.0, 1.0, 0.0
-    ];
-    colorBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(сolors), gl.STATIC_DRAW);
+
+    // создание буфера индексов
+    indexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+    // указываем число индексов это число равно числу индексов
+    indexBuffer.numberOfItems = indices.length;
 }
-// отрисовка
-function draw() {
 
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
-    gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
-    gl.clear(gl.COLOR_BUFFER_BIT);
+function draw1() {
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute,
         vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-    gl.vertexAttribPointer(shaderProgram.vertexColorAttribute,
-        vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
+    gl.drawElements(gl.LINES, indexBuffer.numberOfItems, gl.UNSIGNED_SHORT,0);
+}
+function setupWebGL1()
+{
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
 
-    gl.drawArrays(gl.TRIANGLES, 0, vertexBuffer.numberOfItems);
+    gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+    mat4.perspective(pMatrix, 1.04, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0);
+    mat4.identity(mvMatrix);
+    mat4.translate(mvMatrix,mvMatrix,[0, 0, -2.0]);
+    mat4.rotate(mvMatrix,mvMatrix, 1.9, [0, 1, 0]);
 }
 
 window.onload=function(){
@@ -98,13 +114,15 @@ window.onload=function(){
     if(gl){
         gl.viewportWidth = canvas.width;
         gl.viewportHeight = canvas.height;
+        initShaders1();
 
-        initShaders();
+        initBuffers1();
+        setupWebGL1();
+        setMatrixUniforms();
+        draw1();
 
-        initBuffers();
-
-        draw();
-
+        load1();
         load2();
+        load3();
     }
 };
