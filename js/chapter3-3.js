@@ -3,7 +3,7 @@ var shaderProgram; // программа шейдеров
 var vertexBuffer; // буфер вершин
 var indexBuffer; //буфер индексов
 // установка шейдеров
-function initShaders() {
+function initShaders3() {
     // получаем скрипты вершинного и фрагментного шейдеров
     var fragmentShader = getShader(gl.FRAGMENT_SHADER, 'shader-fs-1');
     var vertexShader = getShader(gl.VERTEX_SHADER, 'shader-vs-1');
@@ -48,15 +48,28 @@ function getShader(type,id) {
     return shader;
 }
 // установка буферов вершин и индексов
-function initBuffers() {
+function initBuffers3() {
 
-    vertices =[ -0.5, -0.5, 0.0,
-        -0.5, 0.5, 0.0,
-        0.0, 0.0, 0.0,
-        0.5, 0.5, 0.0,
-        0.5, -0.5, 0.0];
+    vertices =[
+        -0.7, -0.7, 0.0,         //0
+        -0.7, 0.7, 0.0,         //1
+        -0.5, 0.0, 0.0,          //2
+        -0.3, -0.7, 0.0,          //3
+        -0.3, 0.7, 0.0,         //4
+        -0.2, -0.7, 0.0,         //5
+        -0.2, 0.7, 0.0,          //6
+        0.0, 0.0, 0.0,          //7
+        0.2, -0.7, 0.0,         //8
+        0.2, 0.7, 0.0,         //9
+        0.3, -0.7, 0.0,          //10
+        0.4, 0.0, 0.0,          //11
+        0.5, 0.7, 0.0,          //12
+        0.6, 0.0, 0.0,          //13
+        0.7, -0.7, 0.0];        //14
 
-    indices = [0, 1, 1, 2, 2, 3, 3, 4];
+    indices1 = [0, 2, 1, 3, 2, 4];
+    indices2 = [5, 6, 6, 7, 7, 9, 9, 8];
+    indices3 = [10, 12, 12, 14, 11, 13];
 
     vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
@@ -65,22 +78,38 @@ function initBuffers() {
 
     indexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
-    indexBuffer.numberOfItems = indices.length;
+
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices1), gl.STATIC_DRAW);
+    indexBuffer.numberOfItems = indices1.length;
+
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    draw3();
+
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices2), gl.STATIC_DRAW);
+    indexBuffer.numberOfItems = indices2.length;
+
+    draw3();
+
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices3), gl.STATIC_DRAW);
+    indexBuffer.numberOfItems = indices3.length;
+
+    draw3();
+
+
 }
 
-function draw() {
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+function draw3() {
     gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
-    gl.clear(gl.COLOR_BUFFER_BIT);
     gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute,
         vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
+
     gl.drawElements(gl.LINES, indexBuffer.numberOfItems, gl.UNSIGNED_SHORT,0);
 }
 
-window.onload=function(){
-
-    var canvas = document.getElementById("canvas3D-1");
+function load2(){
+    var canvas = document.getElementById("canvas3D-3");
     try {
         gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
     }
@@ -93,13 +122,9 @@ window.onload=function(){
         gl.viewportWidth = canvas.width;
         gl.viewportHeight = canvas.height;
 
-        initShaders();
+        initShaders3();
 
-        initBuffers();
+        initBuffers3();
 
-        draw();
-
-        load1();
-        load2();
     }
 };
