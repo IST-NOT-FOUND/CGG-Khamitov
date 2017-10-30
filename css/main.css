@@ -42,6 +42,18 @@ a {
     cursor: context-menu;
 }
 
+.top-menu-container{
+    width: calc(100% - 370px);
+    height: 50px;
+    float: left;
+    overflow-x: scroll;
+    white-space: nowrap;
+}
+
+.top-menu-container-wider{
+    width: max-content;
+}
+
 .top-menu-element {
 	text-align: center;
 	padding: 17px 10px;
@@ -50,6 +62,7 @@ a {
     font-size: 14px;
 	cursor: pointer;
 	float: left;
+    vertical-align: top;
 }
 
 .current-element{
