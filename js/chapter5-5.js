@@ -2,13 +2,14 @@ var gl;
 var shaderProgram;
 var vertexBuffer; // буфер вершин
 var indexBuffer; //буфер индексов
+var colorBuffer; //буфер цветов
 
 var mvMatrix = mat4.create();
 var pMatrix = mat4.create();
 // установка шейдеров
-function initShaders1() {
-    var fragmentShader = getShader(gl.FRAGMENT_SHADER, 'shader-fs');
-    var vertexShader = getShader(gl.VERTEX_SHADER, 'shader-vs');
+function initShaders5() {
+    var fragmentShader = getShader(gl.FRAGMENT_SHADER, 'shader-fs-1');
+    var vertexShader = getShader(gl.VERTEX_SHADER, 'shader-vs-1');
 
     shaderProgram = gl.createProgram();
 
@@ -25,7 +26,9 @@ function initShaders1() {
 
     shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
     gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
-    // создания переменных uniform для передачи матриц в шейдер
+    shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "aVertexColor");
+    gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
+
     shaderProgram.MVMatrix = gl.getUniformLocation(shaderProgram, "uMVMatrix");
     shaderProgram.ProjMatrix = gl.getUniformLocation(shaderProgram, "uPMatrix");
 }
@@ -36,10 +39,12 @@ function setMatrixUniforms(){
 }
 // Функция создания шейдера
 function getShader(type,id) {
-
     var source = document.getElementById(id).innerHTML;
+
     var shader = gl.createShader(type);
+
     gl.shaderSource(shader, source);
+
     gl.compileShader(shader);
 
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
@@ -50,7 +55,7 @@ function getShader(type,id) {
     return shader;
 }
 // установка буферов вершин и индексов
-function initBuffers1() {
+function initBuffers5() {
 
     var vertices =[
         // лицевая часть
@@ -62,15 +67,33 @@ function initBuffers1() {
         -0.5, -0.5, -0.5,
         -0.5, 0.5, -0.5,
         0.5, 0.5, -0.5,
-        0.5, -0.5, -0.5];
+        0.5, -0.5, -0.5
+    ];
 
-    var indices = [0, 1, 1, 2, 2, 3, 3, 0, 0, 4, 4, 5, 5, 6, 6,7, 7,4, 1, 5, 2, 6, 3, 7];
+    var indices = [ // лицевая часть
+        0, 1, 2,
+        2, 3, 0,
+        //нижняя часть
+        0, 4, 7,
+        7, 3, 0,
+        // левая боковая часть
+        0, 1, 5,
+        5, 4, 0,
+        // правая боковая часть
+        2, 3, 7,
+        7, 6, 2,
+        // верхняя часть
+        2, 1, 6,
+        6, 5, 1,
+        // задняя часть
+        4, 5, 6,
+        6, 7, 4,
+    ];
 
     // установка буфера вершин
     vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-
     vertexBuffer.itemSize = 3;
 
     // создание буфера индексов
@@ -79,30 +102,53 @@ function initBuffers1() {
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
     // указываем число индексов это число равно числу индексов
     indexBuffer.numberOfItems = indices.length;
+
+    // установка цветов для каждой вершины
+    var сolors = [
+        0.7, 0.0, 0.3,
+        0.5, 0.0, 0.5,
+        0.3, 0.0, 0.7,
+        0.5, 0.0, 0.5,
+
+        0.5, 0.0, 0.5,
+        0.3, 0.0, 0.7,
+        0.5, 0.0, 0.5,
+        0.7, 0.0, 0.3
+
+    ];
+    colorBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(сolors), gl.STATIC_DRAW);
 }
 
-function draw1() {
+function draw5() {
 
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute,
         vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-    gl.drawElements(gl.LINES, indexBuffer.numberOfItems, gl.UNSIGNED_SHORT,0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    gl.vertexAttribPointer(shaderProgram.vertexColorAttribute,
+        vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
+
+    gl.enable(gl.DEPTH_TEST);
+
+    gl.drawElements(gl.TRIANGLES, indexBuffer.numberOfItems, gl.UNSIGNED_SHORT,0);
 }
-function setupWebGL1()
+function setupWebGL5(xPos, out)
 {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-
+    gl.clear(gl.COLOR_BUFFER_BIT || gl.DEPTH_BUFFER_BIT);
     gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
     mat4.perspective(pMatrix, 1.04, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0);
     mat4.identity(mvMatrix);
-    mat4.translate(mvMatrix,mvMatrix,[0, 0, -2.0]);
-    mat4.rotate(mvMatrix,mvMatrix, 1.9, [0, 1, 0]);
+    mat4.translate(mvMatrix, mvMatrix, [0, 0, -2.0]);
+    mat4.rotate(mvMatrix,mvMatrix, xPos, [0, 1, 0]);
 }
 
-window.onload=function(){
+function load4(){
 
-    var canvas = document.getElementById("canvas3D-1");
+    var canvas = document.getElementById("canvas3D-5");
     try {
         gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
     }
@@ -114,16 +160,18 @@ window.onload=function(){
     if(gl){
         gl.viewportWidth = canvas.width;
         gl.viewportHeight = canvas.height;
-        initShaders1();
 
-        initBuffers1();
-        setupWebGL1();
+        initShaders5();
+        initBuffers5();
+        setupWebGL5(2.0);
         setMatrixUniforms();
-        draw1();
+        draw5();
 
-        load1();
-        load2();
-        load3();
-        load4();
+        $("#canvas3D-5").on('mousemove', function(e) {
+                setupWebGL5(e.pageX/50);
+                setMatrixUniforms();
+                draw5();
+        });
+
     }
-};
+}
