@@ -36,10 +36,10 @@
   },
   {
     "chapter" : 6,
-    "status" : 0,
-    "comment_name" : "",
-    "comment_img" : 0,
-    "comment_text" : ""
+    "status" : 3,
+    "comment_name" : "ROAGIS",
+    "comment_img" : 1,
+    "comment_text" : "Добавить кнопки W, S, A, D для управления положением куба аналогично управлением стрелками."
   },
   {
     "chapter" : 7,

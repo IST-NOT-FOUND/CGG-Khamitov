@@ -25,10 +25,44 @@
     </div>
     <div class="easter" onclick="easter()"></div>
 </div>
+
+
+<div class="modal-panel-left">
+    <div class="modal-panel-left-elem hvr-sweep-to-left" id="q-1" onclick="questChoose(this)">Индивидуальное задание</div>
+</div>
+
 <div>
     <!---------------------------------------------------------------------------------------->
 
-    <div class="nothing-to-show">ЗАДАНИЕ ЕЩЕ НЕ ВЫПОЛНЕНО =(</div>
+    <div id="divq-1" class="divq">
+        <p>Анимация вращающегося куба</p>
+        <canvas id="canvas3D-1" width="400" height="300">Ваш браузер не поддерживает элемент canvas</canvas>
+        <script  type="text/javascript" src="../js/gl-matrix-min.js"></script>
+
+        <script id="shader-fs" type="x-shader/x-fragment">
+          void main(void) {
+            gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+          }
+        </script>
+
+        <script id="shader-vs" type="x-shader/x-vertex">
+          attribute vec3 aVertexPosition;
+           uniform mat4 uMVMatrix;
+          uniform mat4 uPMatrix;
+          void main(void) {
+             gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+          }
+        </script>
+    </div>
+
+    <div id="divq-2" class="divq">
+        <p>Анимация вращающегося куба</p>
+        <canvas id="canvas3D-2" width="400" height="300">Ваш браузер не поддерживает элемент canvas</canvas>
+    </div>
+
+    <div id="divq-3" class="divq">
+
+    </div>
 
     <!---------------------------------------------------------------------------------------->
 </div>
@@ -46,5 +80,9 @@
 </div>
 <script src="../js/jquery-3.2.1.min.js"></script>
 <script src="../js/main.js"></script>
+
+<!-- Chapter 6 script -->
+<script src="../js/chapter6-1.js"></script>
+<script src="../js/chapter6-2.js"></script>
 </body>
 </html>
