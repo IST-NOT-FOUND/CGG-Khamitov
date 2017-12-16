@@ -46,7 +46,7 @@ a {
     width: calc(100% - 370px);
     height: 50px;
     float: left;
-    overflow-x: scroll;
+    overflow-x: overlay;
     white-space: nowrap;
 }
 
