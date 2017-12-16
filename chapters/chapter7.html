@@ -25,10 +25,46 @@
     </div>
     <div class="easter" onclick="easter()"></div>
 </div>
+
+<div class="modal-panel-left">
+    <div class="modal-panel-left-elem hvr-sweep-to-left" id="q-1" onclick="questChoose(this)">Индивидуальное задание</div>
+</div>
+
 <div>
     <!---------------------------------------------------------------------------------------->
 
-    <div class="nothing-to-show">ЗАДАНИЕ ЕЩЕ НЕ ВЫПОЛНЕНО =(</div>
+    <div id="divq-1" class="divq">
+
+        <p>Инициалы студента</p>
+
+        <canvas id="canvas3D-1" width="400" height="400">Ваш браузер не поддерживает элемент canvas</canvas>
+
+        <script  type="text/javascript" src="../js/gl-matrix-min.js"></script>
+
+        <script id="shader-fs-1" type="x-shader/x-fragment">
+            precision highp float;
+            uniform sampler2D uSampler;
+            varying vec2 vTextureCoords;
+
+              void main(void) {
+                gl_FragColor = texture2D(uSampler, vTextureCoords);
+              }
+        </script>
+
+        <script id="shader-vs-1" type="x-shader/x-vertex">
+            attribute vec3 aVertexPosition;
+            attribute vec2 aVertexTextureCoords;
+            varying vec2 vTextureCoords;
+            uniform mat4 uMVMatrix;
+              uniform mat4 uPMatrix;
+              void main(void) {
+                gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+                vTextureCoords = aVertexTextureCoords;
+
+              }
+        </script>
+
+    </div>
 
     <!---------------------------------------------------------------------------------------->
 </div>
@@ -46,5 +82,9 @@
 </div>
 <script src="../js/jquery-3.2.1.min.js"></script>
 <script src="../js/main.js"></script>
+
+<!-- Chapter 7 script -->
+<script src="../js/chapter7-1.js"></script>
+
 </body>
 </html>
