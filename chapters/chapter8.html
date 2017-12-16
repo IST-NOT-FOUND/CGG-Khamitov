@@ -25,10 +25,99 @@
     </div>
     <div class="easter" onclick="easter()"></div>
 </div>
+
+<div class="modal-panel-left">
+    <div class="modal-panel-left-elem hvr-sweep-to-left" id="q-1" onclick="questChoose(this)">Индивидуальное задание</div>
+</div>
+
 <div>
     <!---------------------------------------------------------------------------------------->
 
-    <div class="nothing-to-show">ЗАДАНИЕ ЕЩЕ НЕ ВЫПОЛНЕНО =(</div>
+    <div id="divq-1" class="divq">
+
+        <p>Инициалы студента + освещение (Управление на WASD)</p>
+        <div class="canvas-container">
+
+            <select id="textureSelect" class="selectTexture">
+                <option value="grass">Трава</option>
+                <option value="wood">Дерево</option>
+                <option value="brick">Кирпич</option>
+                <option value="sand">Песок</option>
+            </select>
+
+            <canvas id="canvas3D" width="400" height="400" style="position: relative">Ваш браузер не поддерживает элемент canvas</canvas>
+
+        </div>
+
+        <script  type="text/javascript" src="../js/gl-matrix-min.js"></script>
+
+        <script id="shader-vs" type="x-shader/x-vertex">
+          attribute vec3 aVertexPosition;
+          attribute vec3 aVertexNormal;
+          attribute vec2 aVertexTextureCoords;
+
+          uniform mat4 uMVMatrix;
+          uniform mat4 uPMatrix;
+          uniform mat3 uNMatrix;
+
+          uniform vec3 uLightPosition;
+          uniform vec3 uAmbientLightColor;
+          uniform vec3 uDiffuseLightColor;
+          uniform vec3 uSpecularLightColor;
+
+          varying vec2 vTextureCoords;
+          varying vec3 vLightWeighting;
+
+          const float shininess = 16.0;
+
+          void main() {
+            // установка позиции наблюдателя сцены
+            vec4 vertexPositionEye4 = uMVMatrix * vec4(aVertexPosition, 1.0);
+            vec3 vertexPositionEye3 = vertexPositionEye4.xyz / vertexPositionEye4.w;
+
+            // получаем вектор направления света
+            vec3 lightDirection = normalize(uLightPosition - vertexPositionEye3);
+
+            // получаем нормаль
+            vec3 normal = normalize(uNMatrix * aVertexNormal);
+
+            // получаем скалярное произведение векторов нормали и направления света
+            float diffuseLightDot = max(dot(normal, lightDirection), 0.0);
+
+            // получаем вектор отраженного луча и нормализуем его
+            vec3 reflectionVector = normalize(reflect(-lightDirection, normal));
+
+            // установка вектора камеры
+            vec3 viewVectorEye = -normalize(vertexPositionEye3);
+
+            float specularLightDot = max(dot(reflectionVector, viewVectorEye), 0.0);
+
+            float specularLightParam = pow(specularLightDot, shininess);
+
+            // отраженный свет равен сумме фонового, диффузного и зеркального отражений света
+            vLightWeighting = uAmbientLightColor + uDiffuseLightColor * diffuseLightDot +
+                              uSpecularLightColor * specularLightParam;
+
+             // Finally transform the geometry
+             gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+             vTextureCoords = aVertexTextureCoords;
+          }
+        </script>
+
+        <script id="shader-fs" type="x-shader/x-fragment">
+          precision mediump float;
+
+          varying vec2 vTextureCoords;
+          varying vec3 vLightWeighting;
+          uniform sampler2D uSampler;
+
+          void main() {
+            vec4 texelColor = texture2D(uSampler, vTextureCoords);
+            gl_FragColor = vec4(vLightWeighting.rgb * texelColor.rgb, texelColor.a);
+          }
+        </script>
+
+    </div>
 
     <!---------------------------------------------------------------------------------------->
 </div>
@@ -46,5 +135,9 @@
 </div>
 <script src="../js/jquery-3.2.1.min.js"></script>
 <script src="../js/main.js"></script>
+
+<!-- Chapter 8 script -->
+<script src="../js/chapter8-1.js"></script>
+
 </body>
 </html>

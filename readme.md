@@ -2,6 +2,8 @@
 -
 **Разработчик проекта:** студент кафедры ГИС УГАТУ ***Хамитов М. А.***
 
+**Расположение проекта на внешнем хостинге:** [`nefritor.h1n.ru`](http://nefritor.h1n.ru)
+
 [`ВКонтакте`](http://vk.com/nefritor) [`Facebook`](http://facebook.com/nefritor) [`Instagram`](http://instagram.com/nefritor) 
 >#### Данный проект содержит файлы, созданные в процессе обучения владения библиотекой WebGL
 >
