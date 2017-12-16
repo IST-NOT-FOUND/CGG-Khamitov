@@ -229,6 +229,23 @@ a {
     margin: 50px 100px;
 }
 
+.selectTexture{
+    position: relative;
+    width: 400px;
+    height: 30px;
+    color: white;
+    background-color: black;
+    border: transparent;
+    border-bottom: 1px solid;
+}
+
+.canvas-container{
+    width: 400px;
+    height: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 /* Bubble Bottom */
 .hvr-bubble-bottom {
   display: inline-block;

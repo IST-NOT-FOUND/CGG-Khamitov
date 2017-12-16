@@ -1,20 +1,23 @@
 var gl;
 var shaderProgram;
-var wallVertexBuffer;
-var wallIndexBuffer;
-var wallTextureCoordsBuffer;
+var vertexBuffer;
+var indexBuffer;
+var textureCoordsBuffer; // буфер координат текстуры
+var vertexNormalBuffer; // буфер нормалей вершин
 
-var wallTexture; // переменная для хранения текстуры кирпичной стены
-var angle = 0.0; //угол вращения в радианах
+var texture; // переменная для хранения текстуры
+var yAngle = 0.0;//угол вращения в радианах вокруг оси Y
 var zTranslation = -1.5; // смещение по оси Z
+var xAngle = 0.1; // угол вращения в радианах вокруг оси Х
 
-var mvMatrix = mat4.create();
-var pMatrix = mat4.create();
+var mvMatrix = mat4.create(); // матрица вида модели
+var pMatrix = mat4.create();  // матрица проекции
+var nMatrix = mat3.create();  // матрица нормалей
 
 // установка шейдеров
 function initShaders() {
-    var fragmentShader = getShader(gl.FRAGMENT_SHADER, 'shader-fs-1');
-    var vertexShader = getShader(gl.VERTEX_SHADER, 'shader-vs-1');
+    var fragmentShader = getShader(gl.FRAGMENT_SHADER, 'shader-fs');
+    var vertexShader = getShader(gl.VERTEX_SHADER, 'shader-vs');
 
     shaderProgram = gl.createProgram();
 
@@ -35,12 +38,39 @@ function initShaders() {
     shaderProgram.vertexTextureAttribute = gl.getAttribLocation(shaderProgram, "aVertexTextureCoords");
     gl.enableVertexAttribArray(shaderProgram.vertexTextureAttribute);
 
+    // атрибут нормали
+    shaderProgram.vertexNormalAttribute = gl.getAttribLocation(shaderProgram, "aVertexNormal");
+    gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
+
+    // настройка параметров uniform матриц для передачи в шейдер
     shaderProgram.MVMatrix = gl.getUniformLocation(shaderProgram, "uMVMatrix");
     shaderProgram.ProjMatrix = gl.getUniformLocation(shaderProgram, "uPMatrix");
+    shaderProgram.NormalMatrix = gl.getUniformLocation(shaderProgram, "uNMatrix");
+
+    // настройка переменных uniform освещения для передачи в шейдер
+    // позиция источника света
+    shaderProgram.uniformLightPosition = gl.getUniformLocation(shaderProgram, "uLightPosition");
+    // фоновое отражение света
+    shaderProgram.uniformAmbientLightColor = gl.getUniformLocation(shaderProgram, "uAmbientLightColor");
+    // диффузное отражение света
+    shaderProgram.uniformDiffuseLightColor = gl.getUniformLocation(shaderProgram, "uDiffuseLightColor");
+    // зеркальное отражение света
+    shaderProgram.uniformSpecularLightColor = gl.getUniformLocation(shaderProgram, "uSpecularLightColor");
 }
+// настройка цветов освещения
+function setupLights() {
+    gl.uniform3fv(shaderProgram.uniformLightPosition, [0.0, 10.0, 5.0]);
+    gl.uniform3fv(shaderProgram.uniformAmbientLightColor, [0.1, 0.1, 0.1]);
+    gl.uniform3fv(shaderProgram.uniformDiffuseLightColor, [0.7, 0.7, 0.7]);
+    gl.uniform3fv(shaderProgram.uniformSpecularLightColor, [1.0, 1.0, 1.0]);
+}
+
 function setMatrixUniforms(){
+
     gl.uniformMatrix4fv(shaderProgram.ProjMatrix,false, pMatrix);
     gl.uniformMatrix4fv(shaderProgram.MVMatrix, false, mvMatrix);
+    //  установка матрицы нормалей
+    gl.uniformMatrix3fv(shaderProgram.NormalMatrix, false, nMatrix);
 }
 // Функция создания шейдера
 function getShader(type,id) {
@@ -60,7 +90,7 @@ function getShader(type,id) {
     return shader;
 }
 
-function initWordBuffers() {
+function initBuffers() {
 
     var vertices =[
         // Х
@@ -579,15 +609,15 @@ function initWordBuffers() {
         234, 235, 232
     ];
 
-    wallVertexBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, wallVertexBuffer);
+    vertexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-    wallVertexBuffer.itemSize = 3;
+    vertexBuffer.itemSize = 3;
 
-    wallIndexBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, wallIndexBuffer);
+    indexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
-    wallIndexBuffer.numberOfItems = indices.length;
+    indexBuffer.numberOfItems = indices.length;
 
     // Координаты текстуры
     var textureCoords = [];
@@ -595,30 +625,358 @@ function initWordBuffers() {
         textureCoords.push(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0);
     }
     // Создание буфера координат текстуры
-    wallTextureCoordsBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, wallTextureCoordsBuffer);
+    textureCoordsBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordsBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords), gl.STATIC_DRAW);
-    wallTextureCoordsBuffer.itemSize=2;
+    textureCoordsBuffer.itemSize=2;
+
+    var normals = [
+        //Х
+        // Лицевая сторона
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+
+        // Левая сторона
+        -1.0,  -1.0, 0.0,
+        -1.0,  -1.0, 0.0,
+        -1.0,  -1.0, 0.0,
+        -1.0,  -1.0, 0.0,
+
+        -1.0,  1.0, 0.0,
+        -1.0,  1.0, 0.0,
+        -1.0,  1.0, 0.0,
+        -1.0,  1.0, 0.0,
+
+        // Правая сторона
+        1.0,  -1.0,  0.0,
+        1.0,  -1.0,  0.0,
+        1.0,  -1.0,  0.0,
+        1.0,  -1.0,  0.0,
+
+        1.0,  1.0,  0.0,
+        1.0,  1.0,  0.0,
+        1.0,  1.0,  0.0,
+        1.0,  1.0,  0.0,
+
+        // Верхняя сторона
+        0.0,  1.0,  0.0,
+        0.0,  1.0,  0.0,
+        0.0,  1.0,  0.0,
+        0.0,  1.0,  0.0,
+
+        0.0,  1.0,  0.0,
+        0.0,  1.0,  0.0,
+        0.0,  1.0,  0.0,
+        0.0,  1.0,  0.0,
+
+        1.0,  1.0,  0.0,
+        1.0,  1.0,  0.0,
+        1.0,  1.0,  0.0,
+        1.0,  1.0,  0.0,
+
+        -1.0,  1.0,  0.0,
+        -1.0,  1.0,  0.0,
+        -1.0,  1.0,  0.0,
+        -1.0,  1.0,  0.0,
+
+        // Нижняя сторона
+        0.0,  -1.0,  0.0,
+        0.0,  -1.0,  0.0,
+        0.0,  -1.0,  0.0,
+        0.0,  -1.0,  0.0,
+
+        0.0,  -1.0,  0.0,
+        0.0,  -1.0,  0.0,
+        0.0,  -1.0,  0.0,
+        0.0,  -1.0,  0.0,
+
+        1.0,  -1.0,  0.0,
+        1.0,  -1.0,  0.0,
+        1.0,  -1.0,  0.0,
+        1.0,  -1.0,  0.0,
+
+        -1.0,  -1.0,  0.0,
+        -1.0,  -1.0,  0.0,
+        -1.0,  -1.0,  0.0,
+        -1.0,  -1.0,  0.0,
+
+        // Задняя сторона
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+
+        //М
+        // Лицевая сторона
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+
+        // Задняя сторона
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+
+        // Левая сторона
+        -1.0,  0.0, 0.0,
+        -1.0,  0.0, 0.0,
+        -1.0,  0.0, 0.0,
+        -1.0,  0.0, 0.0,
+
+        // Правая сторона
+        1.0,  0.0,  0.0,
+        1.0,  0.0,  0.0,
+        1.0,  0.0,  0.0,
+        1.0,  0.0,  0.0,
+
+        // Верхняя сторона
+        0.0,  1.0,  0.0,
+        0.0,  1.0,  0.0,
+        0.0,  1.0,  0.0,
+        0.0,  1.0,  0.0,
+
+        0.0,  1.0,  0.0,
+        0.0,  1.0,  0.0,
+        0.0,  1.0,  0.0,
+        0.0,  1.0,  0.0,
+
+        1.0,  1.0,  0.0,
+        1.0,  1.0,  0.0,
+        1.0,  1.0,  0.0,
+        1.0,  1.0,  0.0,
+
+        -1.0,  1.0,  0.0,
+        -1.0,  1.0,  0.0,
+        -1.0,  1.0,  0.0,
+        -1.0,  1.0,  0.0,
+
+        // Нижняя сторона
+        0.0,  -1.0,  0.0,
+        0.0,  -1.0,  0.0,
+        0.0,  -1.0,  0.0,
+        0.0,  -1.0,  0.0,
+
+        0.0,  -1.0,  0.0,
+        0.0,  -1.0,  0.0,
+        0.0,  -1.0,  0.0,
+        0.0,  -1.0,  0.0,
+
+        -1.0,  -1.0,  0.0,
+        -1.0,  -1.0,  0.0,
+        -1.0,  -1.0,  0.0,
+        -1.0,  -1.0,  0.0,
+
+        1.0,  -1.0,  0.0,
+        1.0,  -1.0,  0.0,
+        1.0,  -1.0,  0.0,
+        1.0,  -1.0,  0.0,
+
+        1.0,  0.0,  0.0,
+        1.0,  0.0,  0.0,
+        1.0,  0.0,  0.0,
+        1.0,  0.0,  0.0,
+
+        -1.0,  0.0,  0.0,
+        -1.0,  0.0,  0.0,
+        -1.0,  0.0,  0.0,
+        -1.0,  0.0,  0.0,
+
+        //А
+        // Лицевая сторона
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,
+
+        // Задняя сторона
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+        0.0,  0.0,  -1.0,
+
+        // Левая сторона
+        -1.0,  1.0, 0.0,
+        -1.0,  1.0, 0.0,
+        -1.0,  1.0, 0.0,
+        -1.0,  1.0, 0.0,
+
+        // Правая сторона
+        1.0,  1.0,  0.0,
+        1.0,  1.0,  0.0,
+        1.0,  1.0,  0.0,
+        1.0,  1.0,  0.0,
+
+        // Верхняя сторона
+        0.0,  1.0,  0.0,
+        0.0,  1.0,  0.0,
+        0.0,  1.0,  0.0,
+        0.0,  1.0,  0.0,
+
+        // Нижняя сторона
+        0.0,  -1.0,  0.0,
+        0.0,  -1.0,  0.0,
+        0.0,  -1.0,  0.0,
+        0.0,  -1.0,  0.0,
+
+        0.0,  -1.0,  0.0,
+        0.0,  -1.0,  0.0,
+        0.0,  -1.0,  0.0,
+        0.0,  -1.0,  0.0,
+
+        0.0,  -1.0,  0.0,
+        0.0,  -1.0,  0.0,
+        0.0,  -1.0,  0.0,
+        0.0,  -1.0,  0.0,
+
+        1.0,  -1.0,  0.0,
+        1.0,  -1.0,  0.0,
+        1.0,  -1.0,  0.0,
+        1.0,  -1.0,  0.0,
+
+        -1.0,  -1.0,  0.0,
+        -1.0,  -1.0,  0.0,
+        -1.0,  -1.0,  0.0,
+        -1.0,  -1.0,  0.0,
+
+
+        // Внутренняя сторона
+        -1.0,  -1.0,  0.0,
+        -1.0,  -1.0,  0.0,
+        -1.0,  -1.0,  0.0,
+        -1.0,  -1.0,  0.0,
+
+        1.0,  -1.0,  0.0,
+        1.0,  -1.0,  0.0,
+        1.0,  -1.0,  0.0,
+        1.0,  -1.0,  0.0,
+
+        0.0,  1.0,  0.0,
+        0.0,  1.0,  0.0,
+        0.0,  1.0,  0.0,
+        0.0,  1.0,  0.0
+
+    ];
+
+    // Создаем буфер нормалей куба
+    vertexNormalBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexNormalBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
+    vertexNormalBuffer.itemSize = 3;
 }
 
+function draw() {
 
-
-function wordDraw() {
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, wallVertexBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute,
-        wallVertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
+        vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexNormalBuffer);
+    gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute,
+        vertexNormalBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, wallTextureCoordsBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordsBuffer);
     gl.vertexAttribPointer(shaderProgram.vertexTextureAttribute,
-        wallTextureCoordsBuffer.itemSize, gl.FLOAT, false, 0, 0);
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, wallTexture);
-    gl.enable(gl.DEPTH_TEST);
-    gl.drawElements(gl.TRIANGLES, wallIndexBuffer.numberOfItems, gl.UNSIGNED_SHORT,0);
-}
+        textureCoordsBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.enable(gl.DEPTH_TEST);
+    gl.drawElements(gl.TRIANGLES, indexBuffer.numberOfItems, gl.UNSIGNED_SHORT,0);
+}
 function setupWebGL()
 {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -628,38 +986,39 @@ function setupWebGL()
     mat4.perspective(pMatrix, 1.04, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0);
     mat4.identity(mvMatrix);
     mat4.translate(mvMatrix,mvMatrix,[0, 0, zTranslation]);
-    mat4.rotate(mvMatrix,mvMatrix, angle, [0, 1, 0]);
+    mat4.rotateX(mvMatrix,mvMatrix, xAngle);
+    mat4.rotateY(mvMatrix,mvMatrix, yAngle);
+
+    mat3.normalFromMat4(nMatrix, mvMatrix);
 }
-function setupTextures(textureSelect) {
-    var texture = '';
+
+function setTextures(textureSelect){
+    var textureName = '';
     switch (textureSelect){
         case 'grass':
-            texture = 'grass.jpg';
+            textureName = 'grass.jpg';
             break;
         case 'wood':
-            texture = 'wood.png';
+            textureName = 'wood.png';
             break;
         case 'brick':
-            texture = 'brickwall.png';
+            textureName = 'brickwall.png';
             break;
         case 'sand':
-            texture = 'sand.png';
+            textureName = 'sand.png';
             break;
     }
-    wallTexture = gl.createTexture();
-    setTexture("../img/" + texture, wallTexture);
 
-}
-function setTexture(url, texture){
-
+    texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
     var image = new Image();
+
     image.onload = function() {
 
         handleTextureLoaded(image, texture);
     }
 
-    image.src = url;
+    image.src = "../img/" + textureName;
 
     shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
     gl.uniform1i(shaderProgram.samplerUniform, 0);
@@ -675,7 +1034,7 @@ function handleTextureLoaded(image, texture) {
 }
 window.onload=function(){
 
-    var canvas = document.getElementById("canvas3D-1");
+    var canvas = document.getElementById("canvas3D");
     try {
         gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
     }
@@ -690,32 +1049,36 @@ window.onload=function(){
         gl.viewportHeight = canvas.height;
 
         initShaders();
-        initWordBuffers();
-        setupTextures('grass');
+        initBuffers();
+        setTextures('grass');
+        setupLights();
         (function animloop(){
-
             setupWebGL();
             setMatrixUniforms();
-            wordDraw();
+            draw();
             requestAnimFrame(animloop, canvas);
         })();
     }
-
-    // load1();
 }
 function handleKeyDown(e){
     switch(e.keyCode)
     {
-        case 68:
-            angle+=0.1;
-            break;
         case 65:
-            angle-=0.1;
+            yAngle+=0.1;
             break;
-        case 87:
-            zTranslation+=0.1;
+        case 68:
+            yAngle-=0.1;
             break;
         case 83:
+            xAngle+=0.1;
+            break;
+        case 87:
+            xAngle-=0.1;
+            break;
+        case 69:
+            zTranslation+=0.1;
+            break;
+        case 81:
             zTranslation-=0.1;
             break;
     }
@@ -729,9 +1092,8 @@ window.requestAnimFrame = (function(){
         function(callback, element) {
             return window.setTimeout(callback, 1000/60);
         };
-
 })();
 
 $('#textureSelect').on('change', function (e) {
-    setupTextures($('#textureSelect').val());
+    setTextures($('#textureSelect').val());
 });
